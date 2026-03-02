@@ -2,7 +2,7 @@
 
 One-click deploy [nanobot](https://github.com/HKUDS/nanobot) on [Railway](https://railway.app) with a web-based config UI and status dashboard.
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/nanobot)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/2P5jxW?referralCode=ayyhbt&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ## What you get
 

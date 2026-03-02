@@ -23,13 +23,11 @@ from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.templating import Jinja2Templates
 
-from nanobot.config.loader import (
-    convert_keys,
-    convert_to_camel,
-    load_config,
-    save_config,
-)
-from nanobot.config.schema import Config
+def _get_nanobot_config():
+    """Lazy import to avoid crashes if nanobot isn't fully initialized."""
+    from nanobot.config.loader import convert_keys, convert_to_camel, load_config, save_config
+    from nanobot.config.schema import Config
+    return convert_keys, convert_to_camel, load_config, save_config, Config
 
 ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*m")
 SECRET_FIELDS = {"api_key", "apiKey", "token", "app_secret", "appSecret", "encrypt_key", "encryptKey", "verification_token", "verificationToken"}
@@ -298,6 +296,7 @@ async def api_config_get(request: Request):
     auth_err = require_auth(request)
     if auth_err:
         return auth_err
+    convert_keys, convert_to_camel, load_config, save_config, Config = _get_nanobot_config()
     config = load_config()
     data = convert_to_camel(config.model_dump())
     return JSONResponse(mask_secrets(data))
@@ -314,6 +313,7 @@ async def api_config_put(request: Request):
         return JSONResponse({"error": "Invalid JSON"}, status_code=400)
 
     try:
+        convert_keys, convert_to_camel, load_config, save_config, Config = _get_nanobot_config()
         restart = body.pop("_restartGateway", False)
 
         async with config_lock:
@@ -349,6 +349,7 @@ async def api_status(request: Request):
     if auth_err:
         return auth_err
 
+    convert_keys, convert_to_camel, load_config, save_config, Config = _get_nanobot_config()
     config = load_config()
     data = config.model_dump()
 
@@ -409,9 +410,15 @@ async def api_gateway_restart(request: Request):
 
 
 async def auto_start_gateway():
-    config = load_config()
-    if config.get_api_key():
-        asyncio.create_task(gateway.start())
+    try:
+        _, _, load_config, _, _ = _get_nanobot_config()
+        config = load_config()
+        if not config.get_api_key():
+            return
+    except Exception:
+        return
+    asyncio.create_task(gateway.start())
+
 
 
 routes = [
