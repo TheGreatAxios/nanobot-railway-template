@@ -127,7 +127,7 @@
                   <label class="block text-xs text-gray-500 mb-1">Allowed Users (comma-separated)</label>
                   <input type="text" class="w-full bg-gray-100 border border-gray-300 dark:bg-gray-800 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                          :value="(config.channels.telegram.allowFrom || []).join(', ')"
-                         @input="config.channels.telegram.allowFrom = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)">
+                         @change="config.channels.telegram.allowFrom = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)">
                 </div>
               </div>
             </div>
@@ -150,7 +150,7 @@
                   <label class="block text-xs text-gray-500 mb-1">Allowed Users (comma-separated)</label>
                   <input type="text" class="w-full bg-gray-100 border border-gray-300 dark:bg-gray-800 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                          :value="(config.channels.discord.allowFrom || []).join(', ')"
-                         @input="config.channels.discord.allowFrom = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)">
+                         @change="config.channels.discord.allowFrom = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)">
                 </div>
               </div>
             </div>
@@ -195,7 +195,7 @@
                   <label class="block text-xs text-gray-500 mb-1">Allowed Numbers (comma-separated)</label>
                   <input type="text" class="w-full bg-gray-100 border border-gray-300 dark:bg-gray-800 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                          :value="(config.channels.whatsapp.allowFrom || []).join(', ')"
-                         @input="config.channels.whatsapp.allowFrom = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)">
+                         @change="config.channels.whatsapp.allowFrom = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)">
                 </div>
               </div>
             </div>
@@ -233,7 +233,7 @@
                   <label class="block text-xs text-gray-500 mb-1">Allowed Users (comma-separated)</label>
                   <input type="text" class="w-full bg-gray-100 border border-gray-300 dark:bg-gray-800 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                          :value="(config.channels.feishu.allowFrom || []).join(', ')"
-                         @input="config.channels.feishu.allowFrom = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)">
+                         @change="config.channels.feishu.allowFrom = $event.target.value.split(',').map(s => s.trim()).filter(Boolean)">
                 </div>
               </div>
             </div>

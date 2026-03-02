@@ -23,11 +23,37 @@ from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.templating import Jinja2Templates
 
+def _camel_to_snake(name):
+    """Convert camelCase to snake_case."""
+    result = re.sub(r'([A-Z])', r'_\1', name).lower().lstrip('_')
+    return result
+
+
+def _snake_to_camel(name):
+    """Convert snake_case to camelCase."""
+    parts = name.split('_')
+    return parts[0] + ''.join(p.capitalize() for p in parts[1:])
+
+
+def convert_keys(data, converter=_camel_to_snake):
+    """Recursively convert dict keys using converter function."""
+    if isinstance(data, dict):
+        return {converter(k): convert_keys(v, converter) for k, v in data.items()}
+    if isinstance(data, list):
+        return [convert_keys(item, converter) for item in data]
+    return data
+
+
+def convert_to_camel(data):
+    """Recursively convert dict keys from snake_case to camelCase."""
+    return convert_keys(data, _snake_to_camel)
+
+
 def _get_nanobot_config():
     """Lazy import to avoid crashes if nanobot isn't fully initialized."""
-    from nanobot.config.loader import convert_keys, convert_to_camel, load_config, save_config
+    from nanobot.config.loader import load_config, save_config
     from nanobot.config.schema import Config
-    return convert_keys, convert_to_camel, load_config, save_config, Config
+    return load_config, save_config, Config
 
 ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*m")
 SECRET_FIELDS = {"api_key", "apiKey", "token", "app_secret", "appSecret", "encrypt_key", "encryptKey", "verification_token", "verificationToken"}
@@ -142,13 +168,13 @@ class BasicAuthBackend(AuthenticationBackend):
                 return None
             decoded = base64.b64decode(credentials).decode("ascii")
         except (ValueError, UnicodeDecodeError):
-            raise AuthenticationError("Invalid credentials")
+            return None
 
         username, _, password = decoded.partition(":")
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             return AuthCredentials(["authenticated"]), SimpleUser(username)
 
-        raise AuthenticationError("Invalid credentials")
+        return None
 
 
 def require_auth(request: Request):
@@ -296,7 +322,7 @@ async def api_config_get(request: Request):
     auth_err = require_auth(request)
     if auth_err:
         return auth_err
-    convert_keys, convert_to_camel, load_config, save_config, Config = _get_nanobot_config()
+    load_config, save_config, Config = _get_nanobot_config()
     config = load_config()
     data = convert_to_camel(config.model_dump())
     return JSONResponse(mask_secrets(data))
@@ -313,7 +339,7 @@ async def api_config_put(request: Request):
         return JSONResponse({"error": "Invalid JSON"}, status_code=400)
 
     try:
-        convert_keys, convert_to_camel, load_config, save_config, Config = _get_nanobot_config()
+        load_config, save_config, Config = _get_nanobot_config()
         restart = body.pop("_restartGateway", False)
 
         async with config_lock:
@@ -349,7 +375,7 @@ async def api_status(request: Request):
     if auth_err:
         return auth_err
 
-    convert_keys, convert_to_camel, load_config, save_config, Config = _get_nanobot_config()
+    load_config, save_config, Config = _get_nanobot_config()
     config = load_config()
     data = config.model_dump()
 
@@ -411,7 +437,7 @@ async def api_gateway_restart(request: Request):
 
 async def auto_start_gateway():
     try:
-        _, _, load_config, _, _ = _get_nanobot_config()
+        load_config, _, _ = _get_nanobot_config()
         config = load_config()
         if not config.get_api_key():
             return
