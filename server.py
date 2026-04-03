@@ -70,6 +70,10 @@ if not ADMIN_PASSWORD:
 # --- Optional env var seeding into config on first boot ---
 ENV_CONFIG_MAP = {
     # Providers
+    "NANOBOT_CUSTOM_API_KEY": ("providers", "custom", "api_key"),
+    "NANOBOT_CUSTOM_API_BASE": ("providers", "custom", "api_base"),
+    "NANOBOT_AZURE_OPENAI_API_KEY": ("providers", "azure_openai", "api_key"),
+    "NANOBOT_AZURE_OPENAI_API_BASE": ("providers", "azure_openai", "api_base"),
     "NANOBOT_OPENROUTER_API_KEY": ("providers", "openrouter", "api_key"),
     "NANOBOT_ANTHROPIC_API_KEY": ("providers", "anthropic", "api_key"),
     "NANOBOT_OPENAI_API_KEY": ("providers", "openai", "api_key"),
@@ -77,14 +81,33 @@ ENV_CONFIG_MAP = {
     "NANOBOT_GROQ_API_KEY": ("providers", "groq", "api_key"),
     "NANOBOT_GEMINI_API_KEY": ("providers", "gemini", "api_key"),
     "NANOBOT_ZHIPU_API_KEY": ("providers", "zhipu", "api_key"),
+    "NANOBOT_ZAI_API_KEY": ("providers", "zhipu", "api_key"),
+    "NANOBOT_DASHSCOPE_API_KEY": ("providers", "dashscope", "api_key"),
+    "NANOBOT_MOONSHOT_API_KEY": ("providers", "moonshot", "api_key"),
+    "NANOBOT_MINIMAX_API_KEY": ("providers", "minimax", "api_key"),
+    "NANOBOT_MISTRAL_API_KEY": ("providers", "mistral", "api_key"),
+    "NANOBOT_STEPFUN_API_KEY": ("providers", "stepfun", "api_key"),
+    "NANOBOT_AIHUBMIX_API_KEY": ("providers", "aihubmix", "api_key"),
+    "NANOBOT_SILICONFLOW_API_KEY": ("providers", "siliconflow", "api_key"),
+    "NANOBOT_VOLCENGINE_API_KEY": ("providers", "volcengine", "api_key"),
+    "NANOBOT_BYTEPLUS_API_KEY": ("providers", "byteplus", "api_key"),
+    "NANOBOT_OLLAMA_API_BASE": ("providers", "ollama", "api_base"),
+    "NANOBOT_VLLM_API_BASE": ("providers", "vllm", "api_base"),
+    "NANOBOT_OVMS_API_BASE": ("providers", "ovms", "api_base"),
     # Agent defaults
     "NANOBOT_MODEL": ("agents", "defaults", "model"),
     "NANOBOT_PROVIDER": ("agents", "defaults", "provider"),
     "NANOBOT_MAX_TOKENS": ("agents", "defaults", "max_tokens"),
     "NANOBOT_TEMPERATURE": ("agents", "defaults", "temperature"),
     "NANOBOT_MAX_TOOL_ITERATIONS": ("agents", "defaults", "max_tool_iterations"),
+    "NANOBOT_CONTEXT_WINDOW_TOKENS": ("agents", "defaults", "context_window_tokens"),
+    "NANOBOT_MAX_TOOL_RESULT_CHARS": ("agents", "defaults", "max_tool_result_chars"),
+    "NANOBOT_REASONING_EFFORT": ("agents", "defaults", "reasoning_effort"),
+    "NANOBOT_TIMEZONE": ("agents", "defaults", "timezone"),
     # Tools
     "NANOBOT_BRAVE_SEARCH_API_KEY": ("tools", "web", "search", "api_key"),
+    "NANOBOT_WEB_SEARCH_PROVIDER": ("tools", "web", "search", "provider"),
+    "NANOBOT_WEB_SEARCH_BASE_URL": ("tools", "web", "search", "base_url"),
     # Channels - Telegram
     "NANOBOT_TELEGRAM_ENABLED": ("channels", "telegram", "enabled"),
     "NANOBOT_TELEGRAM_TOKEN": ("channels", "telegram", "token"),
@@ -103,7 +126,13 @@ ENV_CONFIG_MAP = {
     "NANOBOT_FEISHU_APP_SECRET": ("channels", "feishu", "app_secret"),
 }
 
-NUMERIC_FIELDS = {"max_tokens", "temperature", "max_tool_iterations"}
+NUMERIC_FIELDS = {
+    "max_tokens",
+    "temperature",
+    "max_tool_iterations",
+    "context_window_tokens",
+    "max_tool_result_chars",
+}
 BOOLEAN_FIELDS = {"enabled"}
 
 
@@ -381,7 +410,11 @@ async def api_status(request: Request):
 
     providers = {}
     for name, prov in data["providers"].items():
-        providers[name] = {"configured": bool(prov.get("api_key"))}
+        providers[name] = {
+            "configured": bool(
+                prov.get("api_key") or prov.get("api_base") or prov.get("extra_headers")
+            )
+        }
 
     channels = {}
     for name, chan in data["channels"].items():
@@ -439,7 +472,26 @@ async def auto_start_gateway():
     try:
         load_config, _, _ = _get_nanobot_config()
         config = load_config()
-        if not config.get_api_key():
+        data = config.model_dump()
+        defaults = data.get("agents", {}).get("defaults", {})
+        channels = data.get("channels", {})
+        providers = data.get("providers", {})
+
+        has_enabled_channel = any(
+            isinstance(channel, dict) and channel.get("enabled") for channel in channels.values()
+        )
+        has_provider_config = any(
+            isinstance(provider, dict)
+            and (provider.get("api_key") or provider.get("api_base") or provider.get("extra_headers"))
+            for provider in providers.values()
+        )
+        forced_provider = defaults.get("provider") not in {"", None, "auto"}
+        model = str(defaults.get("model") or "").lower()
+        oauth_model = any(
+            keyword in model for keyword in ("openai-codex", "github_copilot", "copilot")
+        )
+
+        if not any((has_enabled_channel, has_provider_config, forced_provider, oauth_model)):
             return
     except Exception:
         return

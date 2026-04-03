@@ -12,7 +12,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/requirements.txt
-RUN uv pip install --system --no-cache nanobot-ai -r /app/requirements.txt
+RUN uv pip install --system --no-cache "nanobot-ai[discord,wecom,weixin,matrix]" -r /app/requirements.txt
 
 RUN mkdir -p /data/.nanobot
 

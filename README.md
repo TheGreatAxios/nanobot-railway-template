@@ -2,6 +2,8 @@
 
 One-click deploy [nanobot](https://github.com/HKUDS/nanobot) on [Railway](https://railway.app) with a web-based config UI and status dashboard.
 
+This template has been refreshed against the current upstream nanobot package and docs as of April 3, 2026. The latest tagged release in `HKUDS/nanobot` is `v0.1.4.post6` from March 27, 2026.
+
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/2P5jxW?referralCode=ayyhbt&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ## What you get
@@ -49,6 +51,10 @@ All nanobot-specific variables are **optional**. If set, they seed the config on
 
 | Variable | Description |
 |---|---|
+| `NANOBOT_CUSTOM_API_KEY` | API key for a custom OpenAI-compatible endpoint |
+| `NANOBOT_CUSTOM_API_BASE` | Base URL for a custom OpenAI-compatible endpoint |
+| `NANOBOT_AZURE_OPENAI_API_KEY` | Azure OpenAI API key |
+| `NANOBOT_AZURE_OPENAI_API_BASE` | Azure OpenAI deployment endpoint |
 | `NANOBOT_OPENROUTER_API_KEY` | OpenRouter API key (recommended, access to all models) |
 | `NANOBOT_ANTHROPIC_API_KEY` | Anthropic API key |
 | `NANOBOT_OPENAI_API_KEY` | OpenAI API key |
@@ -56,6 +62,19 @@ All nanobot-specific variables are **optional**. If set, they seed the config on
 | `NANOBOT_GROQ_API_KEY` | Groq API key (also enables voice transcription) |
 | `NANOBOT_GEMINI_API_KEY` | Google Gemini API key |
 | `NANOBOT_ZHIPU_API_KEY` | Zhipu GLM API key |
+| `NANOBOT_ZAI_API_KEY` | Current Zhipu/ZAI API key name |
+| `NANOBOT_DASHSCOPE_API_KEY` | DashScope / Qwen API key |
+| `NANOBOT_MOONSHOT_API_KEY` | Moonshot API key |
+| `NANOBOT_MINIMAX_API_KEY` | MiniMax API key |
+| `NANOBOT_MISTRAL_API_KEY` | Mistral API key |
+| `NANOBOT_STEPFUN_API_KEY` | Step Fun API key |
+| `NANOBOT_AIHUBMIX_API_KEY` | AiHubMix API key |
+| `NANOBOT_SILICONFLOW_API_KEY` | SiliconFlow API key |
+| `NANOBOT_VOLCENGINE_API_KEY` | VolcEngine API key |
+| `NANOBOT_BYTEPLUS_API_KEY` | BytePlus API key |
+| `NANOBOT_OLLAMA_API_BASE` | Ollama base URL |
+| `NANOBOT_VLLM_API_BASE` | vLLM base URL |
+| `NANOBOT_OVMS_API_BASE` | OVMS base URL |
 
 ### Agent Defaults
 
@@ -64,14 +83,20 @@ All nanobot-specific variables are **optional**. If set, they seed the config on
 | `NANOBOT_MODEL` | `anthropic/claude-opus-4-5` | Default model |
 | `NANOBOT_PROVIDER` | *(auto-detected)* | Default provider name |
 | `NANOBOT_MAX_TOKENS` | `8192` | Max tokens per response |
-| `NANOBOT_TEMPERATURE` | `0.7` | Sampling temperature |
-| `NANOBOT_MAX_TOOL_ITERATIONS` | `20` | Max tool call iterations |
+| `NANOBOT_TEMPERATURE` | `0.1` | Sampling temperature |
+| `NANOBOT_MAX_TOOL_ITERATIONS` | `200` | Max tool call iterations |
+| `NANOBOT_CONTEXT_WINDOW_TOKENS` | `65536` | Context window budget |
+| `NANOBOT_MAX_TOOL_RESULT_CHARS` | `16000` | Max chars retained from a tool result |
+| `NANOBOT_REASONING_EFFORT` | *(unset)* | Optional reasoning mode (`low`, `medium`, `high`) |
+| `NANOBOT_TIMEZONE` | `UTC` | Agent timezone (IANA name) |
 
 ### Tools
 
 | Variable | Description |
 |---|---|
 | `NANOBOT_BRAVE_SEARCH_API_KEY` | Brave Search API key for web search |
+| `NANOBOT_WEB_SEARCH_PROVIDER` | Search provider (`brave`, `tavily`, `duckduckgo`, `searxng`, `jina`) |
+| `NANOBOT_WEB_SEARCH_BASE_URL` | Base URL for self-hosted SearXNG |
 
 ### Channels
 
@@ -116,8 +141,8 @@ Railway Container
 
 ## Supported Providers
 
-Anthropic, OpenAI, OpenRouter, DeepSeek, Groq, Gemini, Zhipu, vLLM
+Custom, Azure OpenAI, Anthropic, OpenAI, OpenRouter, DeepSeek, Groq, Gemini, Zhipu, DashScope, Moonshot, MiniMax, Mistral, Step Fun, AiHubMix, SiliconFlow, VolcEngine, BytePlus, vLLM, Ollama, OVMS
 
 ## Supported Channels
 
-Telegram, Discord, Slack, WhatsApp (via bridge), Feishu/Lark
+This image now installs the current optional upstream channel extras for Discord, WeCom, WeChat/Weixin, and Matrix in addition to the base package channels. The UI still focuses on the most common channels: Telegram, Discord, Slack, WhatsApp, and Feishu/Lark.

@@ -52,6 +52,9 @@
 
         <section>
           <h2 class="text-lg font-semibold mb-3">Providers</h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+            This UI covers the current built-in providers. Upstream-only fields still round-trip through save/load even when they are not shown here.
+          </p>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <template x-for="p in providerList" :key="p.key">
               <div class="bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-800 rounded-xl p-4">
@@ -412,14 +415,27 @@
         toast: { show: false, message: '', type: 'success' },
 
         providerList: [
+          { key: 'custom', label: 'Custom', hasBase: true, basePlaceholder: 'https://your-openai-compatible-endpoint/v1' },
+          { key: 'azureOpenai', label: 'Azure OpenAI', hasBase: true, basePlaceholder: 'https://YOUR-RESOURCE.openai.azure.com/openai/deployments/YOUR-DEPLOYMENT' },
           { key: 'anthropic', label: 'Anthropic', hasBase: false },
           { key: 'openai', label: 'OpenAI', hasBase: true, basePlaceholder: 'https://api.openai.com/v1' },
           { key: 'openrouter', label: 'OpenRouter', hasBase: true, basePlaceholder: 'https://openrouter.ai/api/v1' },
           { key: 'deepseek', label: 'DeepSeek', hasBase: false },
           { key: 'groq', label: 'Groq', hasBase: false },
           { key: 'gemini', label: 'Gemini', hasBase: false },
+          { key: 'dashscope', label: 'DashScope', hasBase: true, basePlaceholder: 'https://dashscope.aliyuncs.com/compatible-mode/v1' },
+          { key: 'moonshot', label: 'Moonshot', hasBase: true, basePlaceholder: 'https://api.moonshot.ai/v1' },
+          { key: 'minimax', label: 'MiniMax', hasBase: true, basePlaceholder: 'https://api.minimax.io/v1' },
+          { key: 'mistral', label: 'Mistral', hasBase: true, basePlaceholder: 'https://api.mistral.ai/v1' },
+          { key: 'stepfun', label: 'Step Fun', hasBase: true, basePlaceholder: 'https://api.stepfun.com/v1' },
+          { key: 'aihubmix', label: 'AiHubMix', hasBase: true, basePlaceholder: 'https://aihubmix.com/v1' },
+          { key: 'siliconflow', label: 'SiliconFlow', hasBase: true, basePlaceholder: 'https://api.siliconflow.cn/v1' },
+          { key: 'volcengine', label: 'VolcEngine', hasBase: true, basePlaceholder: 'https://ark.cn-beijing.volces.com/api/v3' },
+          { key: 'byteplus', label: 'BytePlus', hasBase: true, basePlaceholder: 'https://ark.ap-southeast.bytepluses.com/api/v3' },
           { key: 'zhipu', label: 'Zhipu', hasBase: true },
           { key: 'vllm', label: 'vLLM', hasBase: true, basePlaceholder: 'http://localhost:8000/v1' },
+          { key: 'ollama', label: 'Ollama', hasBase: true, basePlaceholder: 'http://localhost:11434/v1' },
+          { key: 'ovms', label: 'OVMS', hasBase: true, basePlaceholder: 'http://localhost:8000/v3' },
         ],
 
         getProvider(key, field) {
@@ -537,7 +553,7 @@
 
     function defaultConfig() {
       return {
-        agents: { defaults: { workspace: '~/.nanobot/workspace', model: 'anthropic/claude-opus-4-5', maxTokens: 8192, temperature: 0.7, maxToolIterations: 20 } },
+        agents: { defaults: { workspace: '~/.nanobot/workspace', model: 'anthropic/claude-opus-4-5', provider: 'auto', maxTokens: 8192, temperature: 0.1, maxToolIterations: 200, timezone: 'UTC' } },
         channels: {
           telegram: { enabled: false, token: '', allowFrom: [], proxy: null },
           discord: { enabled: false, token: '', allowFrom: [] },
@@ -546,14 +562,27 @@
           feishu: { enabled: false, appId: '', appSecret: '', encryptKey: '', verificationToken: '', allowFrom: [] },
         },
         providers: {
+          custom: { apiKey: '', apiBase: null },
+          azureOpenai: { apiKey: '', apiBase: null },
           anthropic: { apiKey: '', apiBase: null },
           openai: { apiKey: '', apiBase: null },
           openrouter: { apiKey: '', apiBase: null },
           deepseek: { apiKey: '', apiBase: null },
           groq: { apiKey: '', apiBase: null },
           gemini: { apiKey: '', apiBase: null },
+          dashscope: { apiKey: '', apiBase: null },
+          moonshot: { apiKey: '', apiBase: null },
+          minimax: { apiKey: '', apiBase: null },
+          mistral: { apiKey: '', apiBase: null },
+          stepfun: { apiKey: '', apiBase: null },
+          aihubmix: { apiKey: '', apiBase: null },
+          siliconflow: { apiKey: '', apiBase: null },
+          volcengine: { apiKey: '', apiBase: null },
+          byteplus: { apiKey: '', apiBase: null },
           zhipu: { apiKey: '', apiBase: null },
           vllm: { apiKey: '', apiBase: null },
+          ollama: { apiKey: '', apiBase: null },
+          ovms: { apiKey: '', apiBase: null },
         },
         gateway: { host: '0.0.0.0', port: 18790 },
         tools: { web: { search: { apiKey: '', maxResults: 5 } }, exec: { timeout: 60, restrictToWorkspace: false } },
