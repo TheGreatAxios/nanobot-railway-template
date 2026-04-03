@@ -4,7 +4,18 @@ One-click deploy [nanobot](https://github.com/HKUDS/nanobot) on [Railway](https:
 
 This template has been refreshed against the current upstream nanobot package and docs as of April 3, 2026. The latest tagged release in `HKUDS/nanobot` is `v0.1.4.post6` from March 27, 2026.
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/2P5jxW?referralCode=ayyhbt&utm_medium=integration&utm_source=template&utm_campaign=generic)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/nanobot-3?referralCode=ayyhbt&utm_medium=integration&utm_source=template&utm_campaign=generic)
+
+## Getting Started
+
+1. Click the **Deploy on Railway** button above
+2. Click **Configure Variables** → Set `ADMIN_PASSWORD` to a secure password (12+ characters)
+3. Click **Deploy**
+4. Once deployed, go to **Settings** → **TCP Proxy** → **Generate** → enter port `8080`
+5. Go to the generated URL once the container restarts — login with username `admin` and your password
+6. Set up your LLM provider (e.g., OpenRouter, Anthropic, etc.)
+7. In Telegram, message [@BotFather](https://t.me/BotFather) to create a bot and get your token
+8. Add the Telegram token to the Setup UI, restart the gateway, and boom — you're live
 
 ## What you get
 
@@ -19,12 +30,7 @@ This template has been refreshed against the current upstream nanobot package an
 
 ### Deploy to Railway
 
-1. Click the "Deploy on Railway" button above
-2. Set the `ADMIN_PASSWORD` environment variable (or a random one will be generated and printed to logs)
-3. Attach a volume mounted at `/data`
-4. Optionally set any of the environment variables below to pre-configure nanobot
-5. Open your app URL — you'll be prompted for credentials (default username: `admin`)
-6. Once setup is complete, remove the public endpoint from your Railway service
+See the [Getting Started](#getting-started) section above for the step-by-step guide
 
 ### Run Locally with Docker
 
@@ -146,3 +152,11 @@ Custom, Azure OpenAI, Anthropic, OpenAI, OpenRouter, DeepSeek, Groq, Gemini, Zhi
 ## Supported Channels
 
 This image now installs the current optional upstream channel extras for Discord, WeCom, WeChat/Weixin, and Matrix in addition to the base package channels. The UI still focuses on the most common channels: Telegram, Discord, Slack, WhatsApp, and Feishu/Lark.
+
+## License & Disclaimer
+
+MIT License — see [LICENSE](LICENSE).
+
+**Use at your own risk.** This template is unaudited. All actions, inputs, and outputs are 100% your responsibility. The bot and template authors assume no liability for any consequences resulting from usage.
+
+[Railway Template →](https://railway.com/deploy/nanobot-3?referralCode=ayyhbt&utm_medium=integration&utm_source=template&utm_campaign=generic)
