@@ -1,0 +1,11 @@
+[project]
+name = "nanobot-railway-template"
+version = "0.1.0"
+description = "Railway deployment template for nanobot with web UI"
+requires-python = ">=3.11"
+dependencies = [
+    "starlette>=1.0.0",
+    "uvicorn>=0.42.0",
+    "jinja2>=3.1.0",
+    "python-multipart>=0.0.22",
+]

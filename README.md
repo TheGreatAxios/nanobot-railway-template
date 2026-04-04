@@ -32,6 +32,23 @@ This template has been refreshed against the current upstream nanobot package an
 
 See the [Getting Started](#getting-started) section above for the step-by-step guide
 
+### Run Locally (with uv)
+
+```bash
+# Install uv if you haven't already
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install dependencies
+uv sync --extra nanobot
+
+# Run the server
+export PORT=8080
+export ADMIN_PASSWORD=changeme
+uv run python server.py
+```
+
+Open `http://localhost:8080` and log in with `admin` / `changeme`.
+
 ### Run Locally with Docker
 
 ```bash
